@@ -6,6 +6,7 @@ import clinicRoutes from './routes/clinic';
 import contactRoutes from './routes/contact';
 import discountRoutes from './routes/discount';
 import reportRoutes from './routes/report';
+import authRoutes from './routes/auth';
 import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
@@ -18,12 +19,13 @@ app.get('/ping', (req, res) => {
   res.send('pong');
 });
 
-app.use('/users', userRoutes);
-app.use('/visits', visitRoutes);
-app.use('/clinics', clinicRoutes);
-app.use('/contacts', contactRoutes);
-app.use('/discounts', discountRoutes);
-app.use('/reports', reportRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/visits', visitRoutes);
+app.use('/api/clinics', clinicRoutes);
+app.use('/api/contacts', contactRoutes);
+app.use('/api/discounts', discountRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/auth', authRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
