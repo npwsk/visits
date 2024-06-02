@@ -1,43 +1,13 @@
 import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
-import { authMiddleware } from '../middleware/auth';
+import { getVisitsByPeriod, getVisitDetails, getVisitsBySpecialization, getClinicsByRep, getUnvisitedClinics } from '../controllers/reports';
+import authMiddleware from '../middleware/auth';
 
 const router = Router();
-const prisma = new PrismaClient();
 
-router.use(authMiddleware);
-
-router.get('/visits', async (req, res) => {
-  try {
-    const reports = await prisma.visit.findMany({
-      include: {
-        user: true,
-        clinic: true,
-        contact: true,
-      },
-    });
-    res.json(reports);
-  } catch (error) {
-    res.status(400).json({ error: 'Error fetching visit reports' });
-  }
-});
-
-router.get('/users', async (req, res) => {
-  try {
-    const reports = await prisma.user.findMany({
-      include: {
-        visits: {
-          include: {
-            clinic: true,
-            contact: true,
-          },
-        },
-      },
-    });
-    res.json(reports);
-  } catch (error) {
-    res.status(400).json({ error: 'Error fetching user reports' });
-  }
-});
+router.get('/visits-by-period', authMiddleware, getVisitsByPeriod);
+router.get('/visit-details', authMiddleware, getVisitDetails);
+router.get('/visits-by-specialization', authMiddleware, getVisitsBySpecialization);
+router.get('/clinics-by-rep', authMiddleware, getClinicsByRep);
+router.get('/unvisited-clinics', authMiddleware, getUnvisitedClinics);
 
 export default router;

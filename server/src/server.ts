@@ -1,34 +1,31 @@
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
-import userRoutes from './routes/user';
-import visitRoutes from './routes/visit';
+import cors from 'cors';
+import dotenv from 'dotenv';
+
+import authRoutes from './routes/auth';
 import clinicRoutes from './routes/clinic';
 import contactRoutes from './routes/contact';
-import discountRoutes from './routes/discount';
 import reportRoutes from './routes/report';
-import authRoutes from './routes/auth';
-import { errorHandler } from './middleware/errorHandler';
+import visitRoutes from './routes/visit';
+
+dotenv.config();
 
 const app = express();
-const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3000;
 
+app.use(cors());
 app.use(express.json());
 
-app.get('/ping', (req, res) => {
-  res.send('pong');
-});
-
-app.use('/api/users', userRoutes);
-app.use('/api/visits', visitRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/clinics', clinicRoutes);
 app.use('/api/contacts', contactRoutes);
-app.use('/api/discounts', discountRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/visits', visitRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
+=======
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
