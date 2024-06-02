@@ -1,8 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  setSidebarOpen: (open: boolean) => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ setSidebarOpen }) => {
   const { isAuthenticated, logout } = useAuth();
 
   return (
@@ -11,7 +15,15 @@ const Navbar: React.FC = () => {
         <div className="text-2xl font-bold text-white">
           <Link to="/">MedRep System</Link>
         </div>
-        <div className="space-x-4">
+        <button
+          className="text-white lg:hidden"
+          onClick={() => setSidebarOpen(true)}
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+        <div className="space-x-4 hidden lg:block">
           {isAuthenticated ? (
             <>
               <Link to="/dashboard" className="text-white hover:underline">Dashboard</Link>
@@ -29,4 +41,4 @@ const Navbar: React.FC = () => {
   );
 };
 
-export default Navbar;
+export default React.memo(Navbar);
