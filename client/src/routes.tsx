@@ -17,6 +17,11 @@ import AddContact from './pages/contacts/AddContact';
 import EditContact from './pages/contacts/EditContact';
 import Profile from './pages/profile/Profile';
 import Layout from './components/Layout';
+import VisitsByPeriodReport from './components/Reports/VisitsByPeriodReport';
+import VisitsStatsReport from './components/Reports/VisitsStatsReport';
+import VisitsBySpecReport from './components/Reports/VisitsBySpecReport';
+import ClinicVisitsStatsReport from './components/Reports/ClinicVisitsStatsReport';
+import UnvisitedClinicsReport from './components/Reports/UnvisitedClinicsReport';
 
 const AppRoutes: React.FC = () => {
     return (
@@ -35,6 +40,11 @@ const AppRoutes: React.FC = () => {
             <Route path="/contacts/edit/:id" element={<Layout><PrivateRoute component={<EditContact />} /></Layout>} />
             <Route path="/contacts" element={<Layout><PrivateRoute component={<Contacts />} /></Layout>} />
             <Route path="/reports" element={<Layout><PrivateRoute component={<Reports />} /></Layout>} />
+            <Route path="/reports/visits-by-period" element={<Layout><PrivateRoute component={<VisitsByPeriodReport />} /></Layout>} />
+            <Route path="/reports/visits-stats" element={<Layout><PrivateRoute component={<VisitsStatsReport />} /></Layout>} />
+            <Route path="/reports/visits-by-specialization" element={<Layout><PrivateRoute component={<VisitsBySpecReport />} /></Layout>} />
+            <Route path="/reports/clinics-by-rep" element={<Layout><PrivateRoute component={<ClinicVisitsStatsReport />} /></Layout>} />
+            <Route path="/reports/unvisited-clinics" element={<Layout><PrivateRoute component={<UnvisitedClinicsReport />} /></Layout>} />
             <Route path="/profile" element={<Layout><PrivateRoute component={<Profile />} /></Layout>} />
         </Routes>
     </Router>

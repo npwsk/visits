@@ -77,6 +77,22 @@ export interface Status {
   visits: Visit[];
 }
 
-export interface VisitsReportData {
-  
+export interface UserVisitStats {
+  userName: string;
+  totalVisits: number;
+  successfulVisits: number;
+  primaryVisitsForClinic: number;
+  primaryVisitsForDoctor: number;
+}
+
+export interface SpecVisitStats {
+  specializations: string[];
+  rows: Record<string, string | number>[];
+}
+
+export interface UserClinicStats {
+  name: string;
+  totalClinics: number;
+  visitedClinics: number;
+  notVisitedClinics: number;
 }

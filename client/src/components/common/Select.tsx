@@ -12,7 +12,7 @@ const Select: React.FC<SelectProps> = ({ label, value, onChange, options }) => {
         <div className="mb-4">
             <label className="block text-gray-700">{label}</label>
             <select value={value} onChange={onChange} className="w-full p-2 border border-gray-300 rounded mt-1">
-                <option value="">Выберите {label.toLowerCase()}</option>
+                <option value="">Все</option>
                 {options.map((option) => (
                     <option key={option.value} value={option.value}>{option.label}</option>
                 ))}

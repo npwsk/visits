@@ -2,14 +2,16 @@ import React, { useState, useEffect } from 'react';
 import axios from '../../utils/axios';
 import Select from '../common/Select';
 import SearchInput from '../common/SearchInput';
-import { User, Visit } from '../../types';
+import { Clinic, User, Visit } from '../../types';
 import { formatClinic, formatContact, formatDate, formatUser } from '../../utils/format';
 
-const VisitsByPeriodReport: React.FC = () => {
+const REPORT_ROUTE = '/reports/unvisited-clinics';
+
+const UnvisitedClinicsReport: React.FC = () => {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [userId, setUserId] = useState('');
-    const [reportData, setReportData] = useState<Visit[]>([]);
+    const [reportData, setReportData] = useState<Clinic[]>([]);
     const [users, setUsers] = useState([] as User[]);
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -27,7 +29,7 @@ const VisitsByPeriodReport: React.FC = () => {
 
     const fetchReport = async () => {
         try {
-            const response = await axios.get('/reports/visits-by-period', {
+            const response = await axios.get(REPORT_ROUTE, {
                 params: { startDate, endDate, userId }
             });
             setReportData(response.data);
@@ -36,17 +38,13 @@ const VisitsByPeriodReport: React.FC = () => {
         }
     };
 
-    const downloadReport = () => {
-        window.location.href = `/reports/visits-by-period?startDate=${startDate}&endDate=${endDate}&userId=${userId}&format=excel`;
-    };
-
-    const filteredReportData = reportData.filter(visit =>
-        `${visit.user} ${visit.clinic}`.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredReportData = reportData.filter(clinic =>
+        `${clinic.name}`.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
         <div className="container mx-auto p-8">
-            <h1 className="text-2xl font-bold mb-4">Отчет по визитам за период</h1>
+            <h1 className="text-2xl font-bold mb-4">Отчет по непосещенным клиникам</h1>
             <div className="mb-4">
                 <label className="block text-gray-700">Начальная дата</label>
                 <input
@@ -72,28 +70,24 @@ const VisitsByPeriodReport: React.FC = () => {
                 options={users.map((user) => ({ value: user.id.toString(), label: `${user.firstName} ${user.lastName}` }))}
             />
             <button onClick={fetchReport} className="bg-blue-500 text-white p-2 rounded mb-4">Сформировать отчет</button>
-            <a href={`/api/reports/visits-by-period?startDate=${startDate}&endDate=${endDate}&userId=${userId}&format=excel`} download={`visits-report-${startDate}-${endDate}.xslx`} onClick={downloadReport} className="bg-green-500 text-white p-2 rounded ml-4 mb-4">Скачать отчет</a>
-            <SearchInput value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Поиск по пользователю или клинике" />
+            <a href={`/api${REPORT_ROUTE}?startDate=${startDate}&endDate=${endDate}&userId=${userId}&format=excel`} download={`visits-report-${startDate}-${endDate}.xslx`} className="bg-green-500 text-white p-2 rounded ml-4 mb-4">Скачать отчет</a>
+            <SearchInput value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Поиск по названию клиники" />
             <table className="min-w-full bg-white mt-6">
                 <thead>
                     <tr>
-                        <th className="py-2 px-4 border-b">Сотрудник</th>
-                        <th className="py-2 px-4 border-b">Клиника</th>
-                        <th className="py-2 px-4 border-b">Контактное лицо</th>
-                        <th className="py-2 px-4 border-b">Дата</th>
-                        <th className="py-2 px-4 border-b">Статус</th>
-                        <th className="py-2 px-4 border-b">Отчет</th>
+                        <th className="py-2 px-4 border-b">Название клиники</th>
+                        <th className="py-2 px-4 border-b">Адрес</th>
+                        <th className="py-2 px-4 border-b">Телефон</th>
+                        <th className="py-2 px-4 border-b">email</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {filteredReportData.map((visit) => (
-                        <tr key={visit.id}>
-                            <td className="py-2 px-4 border-b">{formatUser(visit.user)}</td>
-                            <td className="py-2 px-4 border-b">{formatClinic(visit.clinic)}</td>
-                            <td className="py-2 px-4 border-b">{formatContact(visit.contact)}</td>
-                            <td className="py-2 px-4 border-b">{formatDate(visit.startTime)}</td>
-                            <td className="py-2 px-4 border-b">{visit.status.name}</td>
-                            <td className="py-2 px-4 border-b">{visit.report}</td>
+                    {filteredReportData.map((clinic) => (
+                        <tr key={clinic.id}>
+                            <td className="py-2 px-4 border-b">{clinic.name}</td>
+                            <td className="py-2 px-4 border-b">{clinic.address}</td>
+                            <td className="py-2 px-4 border-b">{clinic.phone}</td>
+                            <td className="py-2 px-4 border-b">{clinic.email}</td>
                         </tr>
                     ))}
                 </tbody>
@@ -102,4 +96,4 @@ const VisitsByPeriodReport: React.FC = () => {
     );
 };
 
-export default VisitsByPeriodReport;
+export default UnvisitedClinicsReport;

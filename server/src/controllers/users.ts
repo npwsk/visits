@@ -12,6 +12,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
                 lastName: true,
                 email: true,
                 roleId: true,
+                role: true,
             },
         });
         res.json(users);

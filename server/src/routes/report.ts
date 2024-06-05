@@ -1,13 +1,14 @@
 import { Router } from 'express';
-import { getVisitsByPeriod, getVisitDetails, getVisitsBySpecialization, getClinicsByRep, getUnvisitedClinics } from '../controllers/reports';
+import { getVisitsByPeriod, getVisitDetails, getVisitsBySpecialization, getClinicsByRep, getUnvisitedClinics, getVisitsStats } from '../controllers/reports';
 import authMiddleware from '../middleware/auth';
 
 const router = Router();
 
-router.get('/visits-by-period', authMiddleware, getVisitsByPeriod);
-router.get('/visit-details', authMiddleware, getVisitDetails);
-router.get('/visits-by-specialization', authMiddleware, getVisitsBySpecialization);
-router.get('/clinics-by-rep', authMiddleware, getClinicsByRep);
-router.get('/unvisited-clinics', authMiddleware, getUnvisitedClinics);
+router.get('/visits-by-period', getVisitsByPeriod);
+router.get('/visit-details', getVisitDetails);
+router.get('/visits-by-specialization', getVisitsBySpecialization);
+router.get('/clinics-by-rep', getClinicsByRep);
+router.get('/unvisited-clinics', getUnvisitedClinics);
+router.get('/visits-stats', authMiddleware, getVisitsStats);
 
 export default router;
