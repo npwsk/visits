@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 const prisma = new PrismaClient();
 
 export const register = async (req: Request, res: Response) => {
-  const { firstName, lastName, email, password, roleId } = req.body;
+  const { firstName, lastName, middleName, email, password, roleId } = req.body;
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -15,6 +15,7 @@ export const register = async (req: Request, res: Response) => {
       data: {
         firstName,
         lastName,
+        middleName,
         email,
         password: hashedPassword,
         roleId: parseInt(roleId, 10),
@@ -52,7 +53,7 @@ export const getCurrentUser = async (req: Request, res: Response) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, firstName: true, lastName: true, email: true, roleId: true },
+      select: { id: true, firstName: true, lastName: true, email: true, roleId: true, role: true },
     });
 
     res.json(user);

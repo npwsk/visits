@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 
+import { isFuture } from 'date-fns';
+
 const prisma = new PrismaClient();
 
 export const getVisits = async (req: Request, res: Response) => {
@@ -19,52 +21,6 @@ export const getVisits = async (req: Request, res: Response) => {
   }
 };
 
-export const createVisit = async (req: Request, res: Response) => {
-  const { date, startTime, endTime, report, statusId, userId, contactId, clinicId } = req.body;
-
-  try {
-    const visit = await prisma.visit.create({
-      data: {
-        date: new Date(date),
-        startTime: new Date(startTime),
-        endTime: new Date(endTime),
-        report,
-        statusId: parseInt(statusId, 10),
-        userId: parseInt(userId, 10),
-        contactId: parseInt(contactId, 10),
-        clinicId: parseInt(clinicId, 10),
-      },
-    });
-    res.status(201).json(visit);
-  } catch (error) {
-    res.status(400).json({ error: 'Unable to create visit' });
-  }
-};
-
-export const updateVisit = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { date, startTime, endTime, report, statusId, userId, contactId, clinicId } = req.body;
-
-  try {
-    const visit = await prisma.visit.update({
-      where: { id: parseInt(id, 10) },
-      data: {
-        date: new Date(date),
-        startTime: new Date(startTime),
-        endTime: new Date(endTime),
-        report,
-        statusId: parseInt(statusId, 10),
-        userId: parseInt(userId, 10),
-        contactId: parseInt(contactId, 10),
-        clinicId: parseInt(clinicId, 10),
-      },
-    });
-    res.json(visit);
-  } catch (error) {
-    res.status(400).json({ error: 'Unable to update visit' });
-  }
-};
-
 export const deleteVisit = async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -76,3 +32,114 @@ export const deleteVisit = async (req: Request, res: Response) => {
   }
 };
 
+export const getVisitById = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+        const visit = await prisma.visit.findUnique({
+            where: { id: Number(id) },
+        });
+        if (!visit) {
+            return res.status(404).json({ error: 'Visit not found' });
+        }
+        res.json(visit);
+    } catch (error) {
+        res.status(500).json({ error: 'Unable to fetch visit' });
+    }
+};
+
+export const createVisit = async (req: Request, res: Response) => {
+    const { date, time, clinicId, contactId, goal } = req.body;
+    const { userId } = req.user;
+
+    // Склеивание даты и времени в одно поле startTime
+    const startTime = new Date(`${date}T${time}:00`);
+
+    // Проверка, что дата и время в будущем
+    if (!isFuture(startTime)) {
+        return res.status(400).json({ error: 'Visit must be scheduled for a future date and time' });
+    }
+
+    try {
+        const visit = await prisma.visit.create({
+            data: {
+                startTime,
+                clinicId: Number(clinicId),
+                contactId: Number(contactId),
+                goal,
+                statusId: 1, // Assuming 1 is 'Запланирован'
+                userId: Number(userId),
+            },
+        });
+        res.status(201).json(visit);
+    } catch (error) {
+        res.status(500).json({ error: 'Unable to create visit' });
+    }
+};
+
+export const updateVisit = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { date, time, endTime, goal, statusId, report, success } = req.body;
+    try {
+        const visit = await prisma.visit.findUnique({
+            where: { id: Number(id) },
+        });
+
+        if (!visit) {
+            return res.status(404).json({ error: 'Visit not found' });
+        }
+
+        // Проверка, что визит ещё не начался
+        if (new Date(visit.startTime) < new Date()) {
+            return res.status(400).json({ error: 'Cannot edit past or ongoing visits' });
+        }
+
+        // Склеивание даты и времени в одно поле startTime
+        const startTime = date && time ? new Date(`${date}T${time}:00`) : undefined;
+
+        const updatedVisit = await prisma.visit.update({
+            where: { id: Number(id) },
+            data: {
+                startTime,
+                endTime: endTime ? new Date(endTime) : undefined,
+                goal: goal || undefined,
+                statusId: statusId || undefined,
+                report: report || undefined,
+                success: success || undefined,
+            },
+        });
+        res.json(updatedVisit);
+    } catch (error) {
+        res.status(500).json({ error: 'Unable to update visit' });
+    }
+};
+
+export const updateVisitStatus = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { statusId, success, report } = req.body;
+    try {
+        const visit = await prisma.visit.findUnique({
+            where: { id: Number(id) },
+        });
+
+        if (!visit) {
+            return res.status(404).json({ error: 'Visit not found' });
+        }
+
+        // Проверка, что визит уже начался или завершился
+        if (new Date(visit.startTime) > new Date()) {
+            return res.status(400).json({ error: 'Cannot update status of a future visit' });
+        }
+
+        const updatedVisit = await prisma.visit.update({
+            where: { id: Number(id) },
+            data: {
+                statusId,
+                success: success || undefined,
+                report: report || undefined,
+            },
+        });
+        res.json(updatedVisit);
+    } catch (error) {
+        res.status(500).json({ error: 'Unable to update visit status' });
+    }
+};

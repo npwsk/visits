@@ -36,9 +36,9 @@ export interface ContactClinic {
 
 export interface Visit {
   id: number;
-  date: Date;
-  startTime: Date;
-  endTime: Date;
+  // date: string;
+  startTime: string;
+  endTime: string;
   report: string;
   statusId: number;
   userId: number;
@@ -59,7 +59,7 @@ export interface Clinic {
   legalName: string;
   inn: string;
   notes: string;
-  responsibleRepId?: number | null;
+  responsibleRepId?: string | null;
   responsibleRep?: User | null;
   contactClinics: ContactClinic[];
   visits: Visit[];

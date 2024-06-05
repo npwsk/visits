@@ -1,91 +1,64 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import axios from 'axios';
-import { JwtPayload, jwtDecode } from 'jwt-decode';
-
-interface User {
-  id: string;
-  name: string;
-  role: string;
-}
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import axios from '../utils/axios';
+import { User } from '../types';
 
 interface AuthContextProps {
-  isAuthenticated: boolean;
-  user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-}
-
-interface AuthProviderProps {
-  children: ReactNode;
+    user: User;
+    login: (email: string, password: string) => Promise<void>;
+    logout: () => void;
+    setUser: React.Dispatch<User>;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [user, setUser] = useState<any>(null);
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          const decodedToken = jwtDecode<JwtPayload>(token);
-          if (decodedToken.exp && decodedToken.exp * 1000 < Date.now()) {
-            localStorage.removeItem('token');
-            setIsAuthenticated(false);
-            return;
-          }
-
-          const response = await axios.get('/api/auth/me', {
-            headers: {
-              Authorization: `Bearer ${token}`
+    useEffect(() => {
+        const fetchUser = async () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    const response = await axios.get('/auth/me');
+                    setUser(response.data);
+                } catch (error) {
+                    console.error('Ошибка при получении данных пользователя:', error);
+                    localStorage.removeItem('token'); // Удаляем токен, если ошибка
+                }
             }
-          });
-          setUser(response.data);
-          setIsAuthenticated(true);
-        } catch (error) {
-          setIsAuthenticated(false);
+        };
+        fetchUser();
+    }, []);
+
+    const login = async (email: string, password: string) => {
+        const res = await axios.post('/auth/login', { email, password });
+        const { token } = res.data;
+        if (token) {
+          localStorage.setItem('token', token);
         }
-      } else {
-        setIsAuthenticated(false);
-      }
+        const response = await axios.get('/auth/me');
+        const user = response.data;
+        if (user) {
+            setUser(user);
+        }
     };
 
-    checkAuth();
-  }, []);
+    const logout = () => {
+        localStorage.removeItem('token');
+        setUser(null);
+    };
 
-  const login = async (email: string, password: string) => {
-    try {
-      const response = await axios.post('/api/auth/login', { email, password });
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      setUser(user);
-      setIsAuthenticated(true);
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  const logout = () => {
-    setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('token');
-    axios.post('/api/auth/logout');
-  };
-
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, user, setUser, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+    return (
+        <AuthContext.Provider value={{ user, login, logout, setUser }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
-export const useAuth = (): AuthContextProps => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (context === undefined) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
 };

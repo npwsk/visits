@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 interface NavbarProps {
@@ -7,38 +6,32 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ setSidebarOpen }) => {
-  const { isAuthenticated, logout } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
-    <nav className="bg-dark-blue p-4 shadow-md">
-      <div className="container mx-auto flex justify-between items-center">
-        <div className="text-2xl font-bold text-white">
-          <Link to="/">MedRep System</Link>
-        </div>
-        <button
-          className="text-white lg:hidden"
-          onClick={() => setSidebarOpen(true)}
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <nav className="bg-gray-800 p-4 text-white flex justify-between items-center">
+      <div className="lg:hidden">
+        <button onClick={() => setSidebarOpen(true)} className="text-white">
+          <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
         </button>
-        <div className="space-x-4 hidden lg:block">
-          {isAuthenticated ? (
-            <>
-              <Link to="/dashboard" className="text-white hover:underline">Dashboard</Link>
-              <button onClick={logout} className="text-white hover:underline">Logout</button>
-            </>
-          ) : (
-            <>
-              <Link to="/login" className="text-white hover:underline">Login</Link>
-              <Link to="/register" className="text-white hover:underline">Register</Link>
-            </>
-          )}
-        </div>
+      </div>
+      <div>
+        <a href="/" className="font-bold">Учет визитов</a>
+      </div>
+      <div>
+        {user ? (
+          <>
+            <span className="mr-4">Привет, {user.firstName}</span>
+            <button onClick={logout} className="bg-red-500 p-2 rounded">Выйти</button>
+          </>
+        ) : (
+          <a href="/login" className="bg-blue-500 p-2 rounded">Войти</a>
+        )}
       </div>
     </nav>
   );
 };
 
-export default React.memo(Navbar);
+export default Navbar;

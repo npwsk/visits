@@ -5,7 +5,7 @@ import SearchInput from '../common/SearchInput';
 import { Clinic } from '../../types';
 
 const ClinicsList: React.FC = () => {
-    const [clinics, setClinics] = useState([] as Clinic[]);
+    const [clinics, setClinics] = useState<Clinic[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {

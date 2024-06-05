@@ -8,7 +8,7 @@ const VisitsByPeriodReport: React.FC = () => {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [userId, setUserId] = useState('');
-    const [reportData, setReportData] = useState([] as );
+    const [reportData, setReportData] = useState([]);
     const [users, setUsers] = useState([] as User[]);
     const [searchTerm, setSearchTerm] = useState('');
 

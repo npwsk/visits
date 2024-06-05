@@ -12,6 +12,19 @@ export const getClinics = async (req: Request, res: Response) => {
   }
 };
 
+
+export const getClinicById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const clinics = await prisma.clinic.findUnique({
+      where: { id: Number(id) }
+    });
+    res.json(clinics);
+  } catch (error) {
+    res.status(500).json({ error: 'Unable to fetch clinic' });
+  }
+};
+
 export const getClinicsByUser = async (req: Request, res: Response) => {
   const { userId } = req.params;
 

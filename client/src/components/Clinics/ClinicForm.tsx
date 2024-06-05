@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from '../../utils/axios';
 import Select from '../common/Select';
-import { User } from '../../types';
+import { Clinic, User } from '../../types';
 
-const ClinicForm: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+const ClinicForm: React.FC<{ id?: string }> = ({ id }) => {
     const navigate = useNavigate();
-    const [clinic, setClinic] = useState({
+    const [clinic, setClinic] = useState<Partial<Clinic>>({
         name: '',
         address: '',
         phone: '',
@@ -17,7 +16,7 @@ const ClinicForm: React.FC = () => {
         notes: '',
         responsibleRepId: ''
     });
-    const [users, setUsers] = useState([] as User[]);
+    const [users, setUsers] = useState<User[]>([]);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -142,7 +141,7 @@ const ClinicForm: React.FC = () => {
                 </div>
                 <Select
                     label="Ответственный представитель"
-                    value={clinic.responsibleRepId}
+                    value={clinic.responsibleRepId || ''}
                     onChange={handleInputChange}
                     options={users.map((user) => ({ value: user.id.toString(), label: `${user.firstName} ${user.lastName}` }))}
                 />
@@ -155,3 +154,4 @@ const ClinicForm: React.FC = () => {
 };
 
 export default ClinicForm;
+

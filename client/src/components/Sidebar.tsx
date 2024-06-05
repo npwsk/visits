@@ -17,27 +17,24 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
         <div className="p-4 font-bold text-lg border-b border-gray-700">MedRep System</div>
         <ul className="p-4 space-y-2">
           <li>
-            <Link to="/dashboard" className="block py-2 px-4 rounded hover:bg-gray-700" onClick={() => setSidebarOpen(false)}>Dashboard</Link>
+            <Link to="/" className="block py-2 px-4 rounded hover:bg-gray-700" onClick={() => setSidebarOpen(false)}>Панель управления</Link>
           </li>
           <li>
-            <Link to="/visits" className="block py-2 px-4 rounded hover:bg-gray-700" onClick={() => setSidebarOpen(false)}>Visits</Link>
+            <Link to="/visits" className="block py-2 px-4 rounded hover:bg-gray-700" onClick={() => setSidebarOpen(false)}>Визиты</Link>
           </li>
           <li>
-            <Link to="/clinics" className="block py-2 px-4 rounded hover:bg-gray-700" onClick={() => setSidebarOpen(false)}>Clinics</Link>
+            <Link to="/clinics" className="block py-2 px-4 rounded hover:bg-gray-700" onClick={() => setSidebarOpen(false)}>Клиники</Link>
           </li>
           <li>
-            <Link to="/contacts" className="block py-2 px-4 rounded hover:bg-gray-700" onClick={() => setSidebarOpen(false)}>Contacts</Link>
+            <Link to="/contacts" className="block py-2 px-4 rounded hover:bg-gray-700" onClick={() => setSidebarOpen(false)}>Контактные лица</Link>
           </li>
-          <li>
-            <Link to="/discounts" className="block py-2 px-4 rounded hover:bg-gray-700" onClick={() => setSidebarOpen(false)}>Discounts</Link>
-          </li>
-          {user?.role === 'MANAGER' && (
+          {user?.role.name === 'MANAGER' && (
             <>
               <li>
-                <Link to="/employees" className="block py-2 px-4 rounded hover:bg-gray-700" onClick={() => setSidebarOpen(false)}>Employees</Link>
+                <Link to="/employees" className="block py-2 px-4 rounded hover:bg-gray-700" onClick={() => setSidebarOpen(false)}>Сотрудники</Link>
               </li>
               <li>
-                <Link to="/reports" className="block py-2 px-4 rounded hover:bg-gray-700" onClick={() => setSidebarOpen(false)}>Reports</Link>
+                <Link to="/reports" className="block py-2 px-4 rounded hover:bg-gray-700" onClick={() => setSidebarOpen(false)}>Отчеты</Link>
               </li>
             </>
           )}

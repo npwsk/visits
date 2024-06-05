@@ -46,7 +46,7 @@ const VisitsList: React.FC = () => {
                             <td className="py-2 px-4 border-b">{visit.user.firstName} {visit.user.lastName}</td>
                             <td className="py-2 px-4 border-b">{visit.clinic.name}</td>
                             <td className="py-2 px-4 border-b">{visit.contact.firstName} {visit.contact.lastName}</td>
-                            <td className="py-2 px-4 border-b">{visit.date.split('T')[0]}</td>
+                            <td className="py-2 px-4 border-b">{visit.startTime.split('T')[0]}</td>
                             <td className="py-2 px-4 border-b">{visit.status.name}</td>
                             <td className="py-2 px-4 border-b">{visit.report}</td>
                             <td className="py-2 px-4 border-b">

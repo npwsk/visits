@@ -79,3 +79,101 @@ export const deleteContact = async (req: Request, res: Response) => {
     res.status(400).json({ error: 'Unable to delete contact' });
   }
 };
+
+export const getContactById = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+        const contact = await prisma.contact.findUnique({
+            where: { id: Number(id) },
+            include: {
+                contactClinics: {
+                    include: {
+                        clinic: true,
+                    },
+                },
+            },
+        });
+        if (!contact) {
+            return res.status(404).json({ error: 'Contact not found' });
+        }
+        res.json(contact);
+    } catch (error) {
+        res.status(500).json({ error: 'Unable to fetch contact' });
+    }
+};
+
+export const getContactClinics = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+      const contactClinic = await prisma.contactClinic.findMany({
+          where: {
+              contactId: Number(id),
+          },
+          include: {
+              clinic: true,
+          },
+      });
+      res.status(200).json(contactClinic);
+  } catch (error) {
+      res.status(500).json({ error: 'Unable to find contact clinic link' });
+  }
+};
+
+export const createContactClinic = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { clinicId, position } = req.body;
+    try {
+        const contactClinic = await prisma.contactClinic.create({
+            data: {
+                contactId: Number(id),
+                clinicId: Number(clinicId),
+                position,
+            },
+            include: {
+                clinic: true,
+            },
+        });
+        res.status(201).json(contactClinic);
+    } catch (error) {
+        res.status(500).json({ error: 'Unable to create contact clinic link' });
+    }
+};
+
+export const updateContactClinic = async (req: Request, res: Response) => {
+    const { id, clinicId } = req.params;
+    const { position } = req.body;
+    try {
+        const contactClinic = await prisma.contactClinic.update({
+            where: {
+                contactId_clinicId: {
+                    contactId: Number(id),
+                    clinicId: Number(clinicId),
+                },
+            },
+            data: { position },
+            include: {
+                clinic: true,
+            },
+        });
+        res.json(contactClinic);
+    } catch (error) {
+        res.status(500).json({ error: 'Unable to update contact clinic link' });
+    }
+};
+
+export const deleteContactClinic = async (req: Request, res: Response) => {
+    const { id, clinicId } = req.params;
+    try {
+        await prisma.contactClinic.delete({
+            where: {
+                contactId_clinicId: {
+                    contactId: Number(id),
+                    clinicId: Number(clinicId),
+                },
+            },
+        });
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ error: 'Unable to delete contact clinic link' });
+    }
+};

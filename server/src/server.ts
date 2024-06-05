@@ -7,6 +7,7 @@ import clinicRoutes from './routes/clinic';
 import contactRoutes from './routes/contact';
 import reportRoutes from './routes/report';
 import visitRoutes from './routes/visit';
+import userRoutes from './routes/user';
 
 dotenv.config();
 
@@ -22,10 +23,8 @@ app.use('/api/contacts', contactRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/visits', visitRoutes);
+app.use('/api/users', userRoutes);
 
-// Error handling middleware
-app.use(errorHandler);
-=======
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

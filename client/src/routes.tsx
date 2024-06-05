@@ -7,7 +7,6 @@ import Dashboard from './pages/dashboard/Dashboard';
 import Visits from './pages/visits/Visits';
 import Clinics from './pages/clinics/Clinics';
 import Contacts from './pages/contacts/Contacts';
-import Discounts from './pages/discounts/Discounts';
 import Employees from './pages/employees/Employees';
 import Reports from './pages/reports/Reports';
 import AddVisit from './pages/visits/AddVisit';
@@ -17,6 +16,7 @@ import EditClinic from './pages/clinics/EditClinic';
 import AddContact from './pages/contacts/AddContact';
 import EditContact from './pages/contacts/EditContact';
 import Profile from './pages/profile/Profile';
+import Layout from './components/Layout';
 
 const AppRoutes: React.FC = () => {
     return (
@@ -24,18 +24,18 @@ const AppRoutes: React.FC = () => {
         <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/" element={<PrivateRoute component={<Dashboard />} />} />
-            <Route path="/visits/add" element={<PrivateRoute component={<AddVisit />} />} />
-            <Route path="/visits/edit/:id" element={<PrivateRoute component={<EditVisit />} />} />
-            <Route path="/visits" element={<PrivateRoute component={<Visits />} />} />
-            <Route path="/clinics/add" element={<PrivateRoute component={<AddClinic />} />} />
-            <Route path="/clinics/edit/:id" element={<PrivateRoute component={<EditClinic />} />} />
-            <Route path="/clinics" element={<PrivateRoute component={<Clinics />} />} />
-            <Route path="/contacts/add" element={<PrivateRoute component={<AddContact />} />} />
-            <Route path="/contacts/edit/:id" element={<PrivateRoute component={<EditContact />} />} />
-            <Route path="/contacts" element={<PrivateRoute component={<Contacts />} />} />
-            <Route path="/reports" element={<PrivateRoute component={<Reports />} />} />
-            <Route path="/profile" element={<PrivateRoute component={<Profile />} />} />
+            <Route path="/" element={<Layout><PrivateRoute component={<Dashboard />} /></Layout>} />
+            <Route path="/visits/add" element={<Layout><PrivateRoute component={<AddVisit />} /></Layout>} />
+            <Route path="/visits/edit/:id" element={<Layout><PrivateRoute component={<EditVisit />} /></Layout>} />
+            <Route path="/visits" element={<Layout><PrivateRoute component={<Visits />} /></Layout>} />
+            <Route path="/clinics/add" element={<Layout><PrivateRoute component={<AddClinic />} /></Layout>} />
+            <Route path="/clinics/edit/:id" element={<Layout><PrivateRoute component={<EditClinic />} /></Layout>} />
+            <Route path="/clinics" element={<Layout><PrivateRoute component={<Clinics />} /></Layout>} />
+            <Route path="/contacts/add" element={<Layout><PrivateRoute component={<AddContact />} /></Layout>} />
+            <Route path="/contacts/edit/:id" element={<Layout><PrivateRoute component={<EditContact />} /></Layout>} />
+            <Route path="/contacts" element={<Layout><PrivateRoute component={<Contacts />} /></Layout>} />
+            <Route path="/reports" element={<Layout><PrivateRoute component={<Reports />} /></Layout>} />
+            <Route path="/profile" element={<Layout><PrivateRoute component={<Profile />} /></Layout>} />
         </Routes>
     </Router>
     );

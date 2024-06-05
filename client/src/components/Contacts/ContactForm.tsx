@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from '../../utils/axios';
 
-const ContactForm: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
+const ContactForm: React.FC<{ id?: string }> = ({ id }) => {
     const navigate = useNavigate();
     const [contact, setContact] = useState({
         firstName: '',
